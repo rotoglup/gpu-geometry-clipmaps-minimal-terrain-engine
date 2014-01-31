@@ -8,9 +8,11 @@ class Bmp
 public:
 
 	Bmp();
+	Bmp(const char*filename);
 	Bmp(int x,int y,int bpp,unsigned char*data=0);
 	~Bmp();
 
+	void load(const char*filename);
 	void save(const char*filename);
 	void save_float(const char*filename);
 	void load_float(const char*filename);

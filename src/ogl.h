@@ -36,7 +36,11 @@ int ogl_tex_new(unsigned int size_x, unsigned int size_y, int filter=GL_LINEAR,i
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
     // buffer data
-    glTexImage2D(GL_TEXTURE_2D, 0, type1, size_x, size_y, 0, type2, type3, data);
+	if(filter!=GL_LINEAR_MIPMAP_LINEAR)
+		glTexImage2D(GL_TEXTURE_2D, 0, type1, size_x, size_y, 0, type2, type3, data);
+	else
+		gluBuild2DMipmaps( GL_TEXTURE_2D, type1, size_x,   size_y, type2, type3, data );
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return id;

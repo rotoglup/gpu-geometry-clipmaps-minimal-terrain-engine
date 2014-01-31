@@ -14,6 +14,13 @@ Bmp::Bmp(int x,int y,int b,unsigned char*buffer)
 	set(x,y,b,buffer);
 }
 //#################################################################//
+Bmp::Bmp(const char*filename)
+{
+	width=height=0;
+	data=NULL;
+	load(filename);
+}
+//#################################################################//
 Bmp::~Bmp()
 {
 	if (data) free(data);
@@ -42,6 +49,47 @@ void Bmp::save(const char*filename)
 		fclose(fn);
 	}
 	else error_stop("Bmp::save");
+}
+//#################################################################//
+void Bmp::load(const char*filename)
+{
+	FILE* handle;
+
+	if(filename==NULL)		
+		{printf("File not found %s !\n",filename);while(1);;}
+	if((char)filename[0]==0)	
+		{printf("File not found %s !\n",filename);while(1);;}
+
+	if ((handle = fopen(filename, "rb")) == NULL)
+		{printf("File not found %s !\n",filename);while(1);;}
+		
+	if(!fread(bmp, 11, 1, handle))
+	{
+		printf("Error reading file %s!\n",filename);
+		while(1);;
+	}
+	if(!fread(&bmp[11], (int)((unsigned char)bmp[10])-11, 1, handle))
+	{
+		printf("Error reading file %s!\n",filename);
+		while(1);;
+	}
+
+	width	=(int)((unsigned char)bmp[18])+((int)((unsigned char)(bmp[19]))<<8);
+	height	=(int)((unsigned char)bmp[22])+((int)((unsigned char)(bmp[23]))<<8);
+	bpp		=bmp[28];
+
+	//printf("%s : %dx%dx%d Bit \n",filename,width,height,bpp);
+	
+	if(data)free(data);
+
+	int size=width*height*(bpp/8);
+
+	data=(unsigned char*)malloc(size+1);
+	fread(data,size,1,handle);
+
+	fclose(handle);
+
+	printf("read successfully %s ; %dx%dx%d Bit \n",filename,width,height,bpp);
 }
 //#################################################################//
 void Bmp::save_float(const char*filename)
